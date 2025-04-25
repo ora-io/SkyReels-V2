@@ -279,9 +279,9 @@ def get_task_result(hash_id):
     if task["status"] == TaskStatus.COMPLETED:
         return {"content": task["result"], "status": "OK"}
     elif task["status"] == TaskStatus.FAILED:
-        return {"content": task["error"], "status": "FAIL"}
+        return Response({"content": "inference error", "status": "FAIL"}, status=500)
     else:
-        return {"status": task["status"]}
+        return Response({"content": "Your request is in progress, please wait...", "status": task["status"]}, status=202)
 
 @app.route("/hash", methods=['GET'])
 def model_program_hash():
