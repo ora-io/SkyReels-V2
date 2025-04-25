@@ -17,3 +17,5 @@ scripts/.gradio/*
 *.jsonl
 out/*
 model/
+server_mock.py
+cache
