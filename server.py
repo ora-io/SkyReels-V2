@@ -87,7 +87,7 @@ def run_text2video(prompt):
     global text_pipe
     
     # Default parameters from generate_video.py
-    negative_prompt = "Bright tones, overexposed, static, blurred details, subtitles, style, works, paintings, images, static, overall gray, worst quality, low quality, JPEG compression residue, ugly, incomplete, extra fingers, poorly drawn hands, poorly drawn faces, deformed, disfigured, misshapen limbs, fused fingers, still picture, messy background, three legs, many people in the background, walking backwards"
+    negative_prompt = ""
     num_frames = 97
     num_inference_steps = 30
     guidance_scale = 6.0
@@ -120,7 +120,7 @@ def run_image2video(prompt, image, negative_prompt=None):
     
     # Default parameters from generate_video.py
     if negative_prompt is None:
-        negative_prompt = "Bright tones, overexposed, static, blurred details, subtitles, style, works, paintings, images, static, overall gray, worst quality, low quality, JPEG compression residue, ugly, incomplete, extra fingers, poorly drawn hands, poorly drawn faces, deformed, disfigured, misshapen limbs, fused fingers, still picture, messy background, three legs, many people in the background, walking backwards"
+        negative_prompt = ""
     num_frames = 97
     num_inference_steps = 30
     guidance_scale = 6.0
