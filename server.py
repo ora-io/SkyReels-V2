@@ -196,15 +196,6 @@ def text2video():
         print("[-] failed to parse request")
         return {"content": "request params decode error", "status": "FAIL"}
     
-    h = str(myhash(prompt))
-    filepath = "cache/" + h + ".mp4"
-    
-    # Check cache
-    if os.path.isfile(filepath): 
-        print("[+] file exists, filepath: ", filepath)
-        content = base64EncodeVideo(filepath)
-        return {"content": content, "status": "OK"}
-    
     # Create new task
     task_id = create_task()
     
@@ -212,10 +203,19 @@ def text2video():
     def process_task():
         try:
             update_task_status(task_id, TaskStatus.PROCESSING)
-            video = run_text2video(prompt)
-            export_to_video(video, filepath, fps=24)
-            content = base64EncodeVideo(filepath)
-            update_task_status(task_id, TaskStatus.COMPLETED, result=content)
+            h = str(myhash(prompt))
+            filepath = "cache/" + h + ".mp4"
+            
+            # Check cache
+            if os.path.isfile(filepath): 
+                print("[+] file exists, filepath: ", filepath)
+                content = base64EncodeVideo(filepath)
+                update_task_status(task_id, TaskStatus.COMPLETED, result=content)
+            else:
+                video = run_text2video(prompt)
+                export_to_video(video, filepath, fps=24)
+                content = base64EncodeVideo(filepath)
+                update_task_status(task_id, TaskStatus.COMPLETED, result=content)
         except Exception as e:
             print("[-] request inference failed" + str(e))
             update_task_status(task_id, TaskStatus.FAILED, error=str(e))
@@ -239,14 +239,6 @@ def image2video():
         return {"content": "request params decode error", "status": "FAIL"}
     
     print("[+] request params:", {k: v for k, v in req.items() if k != 'image'})
-    h = str(myhash(prompt + str(image) + (negative_prompt if negative_prompt else "")))
-    filepath = "cache/" + h + ".mp4"
-    
-    # Check cache
-    if os.path.isfile(filepath): 
-        print("[+] file exists, filepath: ", filepath)
-        content = base64EncodeVideo(filepath)
-        return {"content": content, "status": "OK"}
     
     # Create new task
     task_id = create_task()
@@ -255,10 +247,18 @@ def image2video():
     def process_task():
         try:
             update_task_status(task_id, TaskStatus.PROCESSING)
-            video = run_image2video(prompt, image)
-            export_to_video(video, filepath, fps=24)
-            content = base64EncodeVideo(filepath)
-            update_task_status(task_id, TaskStatus.COMPLETED, result=content)
+
+            h = str(myhash(prompt + str(image) + (negative_prompt if negative_prompt else "")))
+            filepath = "cache/" + h + ".mp4"
+            if os.path.isfile(filepath): 
+                print("[+] file exists, filepath: ", filepath)
+                content = base64EncodeVideo(filepath)
+                update_task_status(task_id, TaskStatus.COMPLETED, result=content)
+            else:
+                video = run_image2video(prompt, image, negative_prompt)
+                export_to_video(video, filepath, fps=24)
+                content = base64EncodeVideo(filepath)
+                update_task_status(task_id, TaskStatus.COMPLETED, result=content)
         except Exception as e:
             print("[-] request inference failed" + str(e))
             update_task_status(task_id, TaskStatus.FAILED, error=str(e))
